@@ -2,7 +2,7 @@ import MortgageCalculator from './components/MortgageCalculator';
 
 function App() {
   return (
-    <div class="min-h-screen bg-base-200 py-8">
+    <div class="flex-1 flex items-center justify-center w-full">
       <MortgageCalculator />
     </div>
   );

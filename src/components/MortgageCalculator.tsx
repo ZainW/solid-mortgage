@@ -2,6 +2,7 @@ import { createSignal, createEffect, Show } from 'solid-js';
 import { formatCurrency, formatPercent } from '../utils/formatters';
 import * as TextField from '@kobalte/core/text-field';
 import * as Checkbox from '@kobalte/core/checkbox';
+import { debounce } from '@solid-primitives/scheduled';
 
 interface AmortizationEntry {
   month: number;
@@ -24,6 +25,17 @@ export default function MortgageCalculator() {
   const [totalInterest, setTotalInterest] = createSignal(0);
   const [totalCost, setTotalCost] = createSignal(0);
   const [amortizationSchedule, setAmortizationSchedule] = createSignal<AmortizationEntry[]>([]);
+
+  const handleNumberInput = (setter: (value: number) => void) => {
+    const debouncedSetter = debounce((value: number) => {
+      setter(value);
+    }, 250);
+
+    return (event: Event) => {
+      const value = (event.target as HTMLInputElement).value;
+      debouncedSetter(Number(value) || 0);
+    };
+  };
 
   createEffect(() => {
     const principal = loanAmount() - downPayment();
@@ -94,7 +106,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={loanAmount()}
-                          onChange={(value) => setLoanAmount(Number(value))}
+                          onInput={handleNumberInput(setLoanAmount)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-7 pr-12 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={0}
                         />
@@ -112,7 +124,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={downPayment()}
-                          onChange={(value) => setDownPayment(Number(value))}
+                          onInput={handleNumberInput(setDownPayment)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-7 pr-12 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={0}
                         />
@@ -127,7 +139,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={interestRate()}
-                          onChange={(value) => setInterestRate(Number(value))}
+                          onInput={handleNumberInput(setInterestRate)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-3 pr-12 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={0}
                           max={100}
@@ -147,7 +159,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={loanTerm()}
-                          onChange={(value) => setLoanTerm(Number(value))}
+                          onInput={handleNumberInput(setLoanTerm)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-3 pr-16 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={1}
                           max={50}
@@ -174,7 +186,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={propertyTax()}
-                          onChange={(value) => setPropertyTax(Number(value))}
+                          onInput={handleNumberInput(setPropertyTax)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-7 pr-12 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={0}
                         />
@@ -192,7 +204,7 @@ export default function MortgageCalculator() {
                         <TextField.Input
                           type="number"
                           value={homeInsurance()}
-                          onChange={(value) => setHomeInsurance(Number(value))}
+                          onInput={handleNumberInput(setHomeInsurance)}
                           class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full pl-7 pr-12 py-3 text-gray-900 bg-white border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                           min={0}
                         />
